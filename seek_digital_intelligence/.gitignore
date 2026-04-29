@@ -1,0 +1,10 @@
+.env
+.scrapy/
+output/
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
