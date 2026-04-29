@@ -15,6 +15,8 @@
 
 set -e
 
+cd "$(dirname "$0")"
+
 PROJECT_ID="859827"   # replace with your numeric project ID
 SPIDER_VERSION=$(date +"%Y%m%d_%H%M")
 
@@ -31,7 +33,7 @@ fi
 
 # Deploy
 echo "▶ Deploying..."
-shub deploy $PROJECT_ID --version $SPIDER_VERSION
+shub deploy "$PROJECT_ID" --version "$SPIDER_VERSION"
 
 echo ""
 echo "✓ Deployed successfully!"

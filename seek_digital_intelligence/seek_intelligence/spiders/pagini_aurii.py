@@ -53,6 +53,11 @@ DEFAULT_CITIES = [
 class PaginiAuriiSpider(scrapy.Spider):
     name = "pagini_aurii"
     allowed_domains = ["paginiaurii.ro"]
+    metadata = {
+        "title": "Pagini Aurii lead discovery",
+        "description": "Collect Romanian SME listings by industry and city for lead scoring.",
+        "template": True,
+    }
 
     # Spider-level Zyte API config: use browser rendering for JS-heavy pages
     custom_settings = {
@@ -107,7 +112,7 @@ class PaginiAuriiSpider(scrapy.Spider):
         )
 
         for listing in listings:
-            yield from self.parse_listing_card(listing, city, industry)
+            yield from self.parse_listing_card(listing, city, industry, response)
 
         # ── Pagination ────────────────────────────────────────────────────────
         if page < self.max_pages:
@@ -125,7 +130,7 @@ class PaginiAuriiSpider(scrapy.Spider):
                     errback=self.handle_error,
                 )
 
-    def parse_listing_card(self, card, city, industry):
+    def parse_listing_card(self, card, city, industry, response):
         """Extract data from a single business card on the listing page."""
         name    = self._clean(card.css("[class*='name'] ::text, h2 ::text, h3 ::text").get())
         phone   = self._clean(card.css("[class*='phone'] ::text, [href^='tel:'] ::text").get())
@@ -149,7 +154,7 @@ class PaginiAuriiSpider(scrapy.Spider):
         item["county"]      = ""   # populated below if detail page is fetched
         item["address"]     = address or ""
         item["phone"]       = phone or ""
-        item["website_url"] = website
+        item["website_url"] = urljoin(response.url, website) if website else None
         item["has_website"] = bool(website)
         item["source"]      = self.name
         item["scraped_at"]  = datetime.now(timezone.utc).isoformat()
