@@ -1,0 +1,6 @@
+project: 859827
+image: seek-digital-intelligence
+stack: scrapy:1.1
+requirements:
+  - seek_digital_intelligence/requirements.txt
+version: 1.0.0
